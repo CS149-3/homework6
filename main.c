@@ -12,7 +12,9 @@
 
 long get_current_time() {
 	/* acquire and return the current time in milliseconds */
-	return 0;
+	struct timeval current;
+	gettimeofday(&current, NULL);
+	return ((long) current.tv_usec) / 1000;
 }
 
 void iterative_process(int process, int pipe, long start_time) {
