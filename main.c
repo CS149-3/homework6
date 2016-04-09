@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/time.h>
 
 // the total number of pipe pairs
 #define NUM_PIPES	 	5
@@ -12,7 +13,9 @@
 
 float get_current_time() {
 	/* acquire and return the current time in milliseconds */
-	return 0;
+	struct timeval current;
+	gettimeofday(&current, NULL);
+	return ((long) current.tv_usec) / 1000;
 }
 
 void iterative_process(int process, int pipe, float start_time) {
