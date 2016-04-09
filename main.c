@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/time.h>
 
 // the total number of pipe pairs
 #define NUM_PIPES	 	5
