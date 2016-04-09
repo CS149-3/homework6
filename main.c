@@ -11,14 +11,21 @@
 // size we will send and receive through pipes
 #define BUFFER_SIZE 100
 
-float get_current_time() {
+double get_current_time() {
 	/* acquire and return the current time in milliseconds */
 	struct timeval current;
+	long mtime, seconds, useconds;
+
 	gettimeofday(&current, NULL);
-	return ((long) current.tv_usec) / 1000;
+
+	seconds  = current.tv_sec;
+	useconds = current.tv_usec;
+
+	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+	return mtime / 1000.0;
 }
 
-void iterative_process(int process, int pipe, float start_time) {
+void iterative_process(int process, int pipe, double start_time) {
 	/* example, replace this */
 
 	// sleep 3 seconds
@@ -30,7 +37,7 @@ void iterative_process(int process, int pipe, float start_time) {
 		// set writebuffer to all null characters (this is important when printing the buffer)
 		memset(writebuffer, '\0', sizeof(writebuffer));
 		// print formatted string to the buffer
-		snprintf(writebuffer, sizeof(writebuffer), "%5.3f: Child %d message %d", get_current_time() - start_time, process, i);
+		snprintf(writebuffer, sizeof(writebuffer), "%5.3lf: Child %d message %d", get_current_time() - start_time, process, i);
 		// write buffer to pipe
 		write(pipe, writebuffer, strlen(writebuffer));
 		// sleep 2 seconds before repeating
@@ -38,7 +45,7 @@ void iterative_process(int process, int pipe, float start_time) {
 	}
 }
 
-void stdin_process(int process, int pipe, float start_time) {
+void stdin_process(int process, int pipe, double start_time) {
 	/* example, replace this; this example does not get anything from stdin and mostly identical to iterative_process */
 
 	// sleep 2 seconds
@@ -50,7 +57,7 @@ void stdin_process(int process, int pipe, float start_time) {
 		// set writebuffer to all null characters (this is important when printing the buffer)
 		memset(writebuffer, '\0', sizeof(writebuffer));
 		// print formatted string to the buffer
-		snprintf(writebuffer, sizeof(writebuffer), "%5.3f: Child %d message %d", get_current_time() - start_time, process, i);
+		snprintf(writebuffer, sizeof(writebuffer), "%5.3lf: Child %d message %d", get_current_time() - start_time, process, i);
 		// write buffer to pipe
 		write(pipe, writebuffer, strlen(writebuffer));
 		// sleep 2 seconds before repeating
@@ -64,7 +71,7 @@ int main(int argc, char const *argv[]) {
 	pid_t child_pids[5];
 	int pipes[2 * NUM_PIPES];
 
-	float start_time = get_current_time();
+	double start_time = get_current_time();
 
 	// create pipes
 	for(int i = 0; i < NUM_PIPES; i++) {
@@ -172,7 +179,7 @@ int main(int argc, char const *argv[]) {
 						char readbuffer[BUFFER_SIZE];
 						memset(readbuffer, '\0', sizeof(readbuffer));
 						read(pipes[i], readbuffer, sizeof(readbuffer)-1);
-						if (readbuffer[0] != '\0') printf("%lo %s\n", get_current_time() - start_time, readbuffer);
+						if (readbuffer[0] != '\0') printf("%5.3lf %s\n", get_current_time() - start_time, readbuffer);
 					}
 				}
 			}
