@@ -9,7 +9,7 @@
 #define NUM_PIPES	 	5
 
 // size we will send and receive through pipes
-#define BUFFER_SIZE 100
+#define BUFFER_SIZE 1000
 
 double get_current_time() {
 	/* acquire and return the current time in milliseconds */
@@ -117,7 +117,7 @@ int main(int argc, char const *argv[]) {
 	if(pid == (pid_t) 0) {
 		// assign random seed
 		srand(time(NULL) ^ (getpid()<<16));
-		
+
 		// assign read and write pipe variables
 		int read_pipe = pipes[process * 2];
 		int write_pipe = pipes[(process * 2) + 1];
