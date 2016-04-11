@@ -36,31 +36,21 @@ void iterative_process(int process, int pipe, double start_time) {
 		memset(writebuffer, '\0', sizeof(writebuffer));
 
 		// print formatted string to the buffer
-<<<<<<< HEAD
-		snprintf(writebuffer, sizeof(writebuffer), "%5.3lf: Child %d message %d \n",
-							get_current_time() - start_time, process, i);
-							
-=======
-		snprintf(writebuffer, sizeof(writebuffer), "%5.3lf: Child %d message %d",
-							get_current_time() - start_time, process, i);
 
->>>>>>> ba0770d416c232c223938c00dcbbef8bb5fc37ed
+		snprintf(writebuffer, sizeof(writebuffer), "%5.3lf: Child %d message %d, ",
+							get_current_time() - start_time, process, i);
+				
 		// write buffer to pipe
 		write(pipe, writebuffer, strlen(writebuffer));
 
 		 //sleep for a random time of 0, 1, 2 seconds between messages
-<<<<<<< HEAD
+
 		int j = rand()%3;
 		sleep(j);
 		
-=======
-		int i = rand()%3;
-		sleep(i);
-
->>>>>>> ba0770d416c232c223938c00dcbbef8bb5fc37ed
-		 //Determine how long process has been running. if >= 30 sec. break out
-		 double running = get_current_time() - start_time;
-		 if(running >= 30.0)
+		//Determine how long process has been running. if >= 30 sec. break out
+		double running = get_current_time() - start_time;
+		if(running >= 30.0)
 			break;
 	}
 }
