@@ -11,6 +11,9 @@
 // size we will send and receive through pipes
 #define BUFFER_SIZE 1000
 
+// filename for output file
+const char OUTPUT_NAME[] = "output.txt"; 
+
 double get_current_time() {
 	/* acquire and return the current time in milliseconds */
 	struct timeval current;
@@ -37,7 +40,7 @@ void iterative_process(int process, int pipe, double start_time) {
 		memset(writebuffer, '\0', sizeof(writebuffer));
 
 		// print formatted string to the buffer
-		snprintf(writebuffer, sizeof(writebuffer), "%5.3lf: Child %d message %d",
+		snprintf(writebuffer, sizeof(writebuffer), "%5.3lf: Child %d message %d, ",
 							get_current_time() - start_time, process, i);
 
 		// write buffer to pipe
@@ -88,6 +91,17 @@ int main(int argc, char const *argv[]) {
 			fprintf(stderr, "Pipe failed.\n");
 			return EXIT_FAILURE;
 		}
+	}
+
+	//creaing writable file connection
+	FILE *output;
+	char *mode = "w";
+	output = fopen(OUTPUT_NAME, mode);
+
+	// checks for file connection error
+	if(output == NULL){
+		fprintf(stderr, "Can't open output file %s! \n", OUTPUT_NAME);
+		return EXIT_FAILURE;
 	}
 
 	// this will let us set the process number for the child before it forks
@@ -191,7 +205,8 @@ int main(int argc, char const *argv[]) {
 						char readbuffer[BUFFER_SIZE];
 						memset(readbuffer, '\0', sizeof(readbuffer));
 						read(pipes[i], readbuffer, sizeof(readbuffer)-1);
-						if (readbuffer[0] != '\0') printf("%5.3lf %s\n", get_current_time() - start_time, readbuffer);
+						//writes to output file
+						if (readbuffer[0] != '\0') fprintf(output, "%5.3lf %s\n", get_current_time() - start_time, readbuffer);
 					}
 				}
 			}
@@ -207,6 +222,11 @@ int main(int argc, char const *argv[]) {
 		return EXIT_FAILURE;
 	}
 
+	//let user know that file is ready 
+	printf("Output file %s is ready!", OUTPUT_NAME);
+
+	//close file connection
+	fclose(output);
 	// return at end of process
 	return EXIT_SUCCESS;
 }
