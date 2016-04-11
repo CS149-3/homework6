@@ -37,7 +37,8 @@ void iterative_process(int process, int pipe, double start_time) {
 
 		// print formatted string to the buffer
 <<<<<<< HEAD
-		snprintf(writebuffer, sizeof(writebuffer), "%5.3lf: Child %d message %d \n",get_current_time() - start_time, process, i);
+		snprintf(writebuffer, sizeof(writebuffer), "%5.3lf: Child %d message %d \n",
+							get_current_time() - start_time, process, i);
 							
 =======
 		snprintf(writebuffer, sizeof(writebuffer), "%5.3lf: Child %d message %d",
@@ -201,7 +202,7 @@ int main(int argc, char const *argv[]) {
 						char readbuffer[BUFFER_SIZE];
 						memset(readbuffer, '\0', sizeof(readbuffer));
 						read(pipes[i], readbuffer, sizeof(readbuffer)-1);
-						if (readbuffer[0] != '\0') printf("%s", readbuffer);
+						if (readbuffer[0] != '\0') printf("%5.3lf %s",get_current_time() - start_time, readbuffer);
 					}
 				}
 				printf("\n");
