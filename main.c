@@ -14,15 +14,14 @@
 double get_current_time() {
 	/* acquire and return the current time in milliseconds */
 	struct timeval current;
-	long mtime, seconds, useconds;
+	double mtime, seconds, useconds;
 
 	gettimeofday(&current, NULL);
 
 	seconds  = current.tv_sec;
 	useconds = current.tv_usec;
 
-	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
-	return mtime / 1000.0;
+	return ((seconds) + (useconds/1000000.0));
 }
 
 void iterative_process(int process, int pipe, double start_time) {
@@ -37,15 +36,14 @@ void iterative_process(int process, int pipe, double start_time) {
 		memset(writebuffer, '\0', sizeof(writebuffer));
 		
 		// print formatted string to the buffer
-		snprintf(writebuffer, sizeof(writebuffer), "%5.3lf: Child %d message %d", 
-							get_current_time() - start_time, process, i);
+		snprintf(writebuffer, sizeof(writebuffer), "%5.3lf: Child %d message %d \n",get_current_time() - start_time, process, i);
 							
 		// write buffer to pipe
 		write(pipe, writebuffer, strlen(writebuffer));
 		
 		 //sleep for a random time of 0, 1, 2 seconds between messages
-		int i = rand()%3;
-		sleep(i);
+		int j = rand()%3;
+		sleep(j);
 		
 		 //Determine how long process has been running. if >= 30 sec. break out
 		 double running = get_current_time() - start_time;
@@ -188,9 +186,10 @@ int main(int argc, char const *argv[]) {
 						char readbuffer[BUFFER_SIZE];
 						memset(readbuffer, '\0', sizeof(readbuffer));
 						read(pipes[i], readbuffer, sizeof(readbuffer)-1);
-						if (readbuffer[0] != '\0') printf("%5.3lf %s\n", get_current_time() - start_time, readbuffer);
+						if (readbuffer[0] != '\0') printf("%s", readbuffer);
 					}
 				}
+				printf("\n");
 			}
 			// else nothing was readable by the timeout period
 			else {
