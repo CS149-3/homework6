@@ -62,17 +62,20 @@ void stdin_process(int process, int pipe, double start_time) {
 
 	// write buffer variable
 	char writebuffer[BUFFER_SIZE];
-	// loop through 5 iterative messages on a sleep cycle of 2
-	// set writebuffer to all null characters (this is important when printing the buffer)
-	memset(writebuffer, '\0', sizeof(writebuffer));
-	printf("Enter user input: ");
-	char userInput[100];
-	scanf("%s", &userInput);
-
-	// print formatted string to the buffer
-	snprintf(writebuffer, sizeof(writebuffer), "%5.3lf: Child %d message: %s", get_current_time() - start_time, process, userInput);
-	// write buffer to pipe
-	write(pipe, writebuffer, strlen(writebuffer));
+	while(1){
+		// set writebuffer to all null characters (this is important when printing the buffer)
+		memset(writebuffer, '\0', sizeof(writebuffer));
+		printf("Enter user input: ");
+		char userInput[100];
+		fgets(userInput, 100, stdin);
+		
+		// print formatted string to the buffer
+		snprintf(writebuffer, sizeof(writebuffer), "%5.3lf: Child %d message: %s", get_current_time() - start_time, process, userInput);
+		// write buffer to pipe
+		write(pipe, writebuffer, strlen(writebuffer));
+		if(get_current_time() - start_time >= 30)
+			break;
+	}
 }
 
 int main(int argc, char const *argv[]) {

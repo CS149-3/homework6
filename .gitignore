@@ -8,6 +8,9 @@
 *.gch
 *.pch
 
+#Text files
+*.txt
+
 # Libraries
 *.lib
 *.a
