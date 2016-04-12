@@ -192,10 +192,10 @@ int main(int argc, char const *argv[]) {
 						char readbuffer[BUFFER_SIZE];
 						memset(readbuffer, '\0', sizeof(readbuffer));
 						read(pipes[i], readbuffer, sizeof(readbuffer)-1);
-						if (readbuffer[0] != '\0') printf("%5.3lf %s",get_current_time() - start_time, readbuffer);
+						if (readbuffer[0] != '\0') printf("%5.3lf %s \n",get_current_time() - start_time, readbuffer);
 					}
 				}
-				printf("\n");
+
 			}
 			// else nothing was readable by the timeout period
 			else {
