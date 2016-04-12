@@ -60,19 +60,23 @@ void iterative_process(int process, int pipe, double start_time) {
 void stdin_process(int process, int pipe, double start_time) {
 	/* example, replace this; this example does not get anything from stdin and mostly identical to iterative_process */
 
+	// sleep 2 seconds
+	sleep(2);
 	// write buffer variable
 	char writebuffer[BUFFER_SIZE];
 	// loop through 5 iterative messages on a sleep cycle of 2
-	// set writebuffer to all null characters (this is important when printing the buffer)
-	memset(writebuffer, '\0', sizeof(writebuffer));
-	printf("Enter user input: ");
-	char userInput[100];
-	scanf("%s", &userInput);
+	for (int i = 0; i < 5; i++) {
+		// set writebuffer to all null characters (this is important when printing the buffer)
+		memset(writebuffer, '\0', sizeof(writebuffer));
 
-	// print formatted string to the buffer
-	snprintf(writebuffer, sizeof(writebuffer), "%5.3lf: Child %d message: %s", get_current_time() - start_time, process, userInput);
-	// write buffer to pipe
-	write(pipe, writebuffer, strlen(writebuffer));
+
+
+		// print formatted string to the buffer
+		snprintf(writebuffer, sizeof(writebuffer), "%5.3lf: Child %d message %d", get_current_time() - start_time, process, i);		// write buffer to pipe
+		write(pipe, writebuffer, strlen(writebuffer));
+		// sleep 2 seconds before repeating
+		sleep(2);
+	}
 }
 
 int main(int argc, char const *argv[]) {
