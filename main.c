@@ -65,6 +65,8 @@ void stdin_process(int process, int pipe, double start_time) {
 		//clear memory location in case of excess data
 		memset(writebuffer, '\0', sizeof(writebuffer));
 		memset(messagebuffer, '\0', sizeof(messagebuffer));
+		//prints prompt
+		printf("Enter text: ");
 		// get string from input
 		gets(messagebuffer);
 		// write formated string appended with user message to writebuffer
@@ -199,7 +201,7 @@ int main(int argc, char const *argv[]) {
 			// any other non-zero means a file is readable
 			else if (retval) {
 				// will remove; debug output to visibly see different select cycles
-				printf("Data is available now.\n");
+				//printf("Data is available now.\n");
 				// loop through pipes to find the readable ones
 				for (int i = 0; i < NUM_PIPES * 2; i += 2) {
 					// FD_ISSET returns non-zero when the FD is readable
