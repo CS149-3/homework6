@@ -58,23 +58,27 @@ void iterative_process(int process, int pipe, double start_time) {
 }
 
 void stdin_process(int process, int pipe, double start_time) {
-	/* example, replace this; this example does not get anything from stdin and mostly identical to iterative_process */
-
-	// sleep 2 seconds
-	sleep(2);
-	// write buffer variable
 	char writebuffer[BUFFER_SIZE];
-	// loop through 5 iterative messages on a sleep cycle of 2
-	for (int i = 0; i < 5; i++) {
-		// set writebuffer to all null characters (this is important when printing the buffer)
+
+	while(1){
+		char messagebuffer[100];
+		//clear memory location in case of excess data
 		memset(writebuffer, '\0', sizeof(writebuffer));
-		// print formatted string to the buffer
-		snprintf(writebuffer, sizeof(writebuffer), "%5.3lf: Child %d message %d", get_current_time() - start_time, process, i);
+		memset(messagebuffer, '\0', sizeof(messagebuffer));
+		//prints prompt
+		printf("Enter text: ");
+		// get string from input
+		gets(messagebuffer);
+		// write formated string appended with user message to writebuffer
+		snprintf(writebuffer, sizeof(writebuffer), "%5.3lf: Child %d message %s, ",
+							get_current_time() - start_time, process, messagebuffer);
 		// write buffer to pipe
-		write(pipe, writebuffer, strlen(writebuffer));
-		// sleep 2 seconds before repeating
-		sleep(2);
+		write(pipe, writebuffer, sizeof(writebuffer));
+		// check for termination condition
+		if(get_current_time() - start_time >= 30)
+			break;
 	}
+
 }
 
 int main(int argc, char const *argv[]) {
@@ -197,7 +201,7 @@ int main(int argc, char const *argv[]) {
 			// any other non-zero means a file is readable
 			else if (retval) {
 				// will remove; debug output to visibly see different select cycles
-				printf("Data is available now.\n");
+				//printf("Data is available now.\n");
 				// loop through pipes to find the readable ones
 				for (int i = 0; i < NUM_PIPES * 2; i += 2) {
 					// FD_ISSET returns non-zero when the FD is readable
