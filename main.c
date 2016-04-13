@@ -12,7 +12,7 @@
 #define BUFFER_SIZE 1000
 
 // filename for output file
-const char OUTPUT_NAME[] = "output.txt"; 
+const char OUTPUT_NAME[] = "output.txt";
 
 double get_current_time() {
 	/* acquire and return the current time in milliseconds */
@@ -46,20 +46,18 @@ void iterative_process(int process, int pipe, double start_time) {
 		// write buffer to pipe
 		write(pipe, writebuffer, strlen(writebuffer));
 
-		 //sleep for a random time of 0, 1, 2 seconds between messages
+		//sleep for a random time of 0, 1, 2 seconds between messages
 		int i = rand()%3;
 		sleep(i);
 
-		 //Determine how long process has been running. if >= 30 sec. break out
-		 double running = get_current_time() - start_time;
-		 if(running >= 30.0)
+		//Determine how long process has been running. if >= 30 sec. break out
+		double running = get_current_time() - start_time;
+		if(running >= 30.0)
 			break;
 	}
 }
 
 void stdin_process(int process, int pipe, double start_time) {
-	/* example, replace this; this example does not get anything from stdin and mostly identical to iterative_process */
-
 	// write buffer variable
 	char writebuffer[BUFFER_SIZE];
 	while(1){
@@ -68,12 +66,13 @@ void stdin_process(int process, int pipe, double start_time) {
 		printf("Enter user input: ");
 		char userInput[100];
 		fgets(userInput, 100, stdin);
-		
+		userInput[strcspn(userInput, "\r\n")] = '\0'; // just cleaning newline
 		// print formatted string to the buffer
-		snprintf(writebuffer, sizeof(writebuffer), "%5.3lf: Child %d message: %s", get_current_time() - start_time, process, userInput);
+		snprintf(writebuffer, sizeof(writebuffer), "%5.3lf: Child %d message: %s, ", get_current_time() - start_time, process, userInput);
+
 		// write buffer to pipe
 		write(pipe, writebuffer, strlen(writebuffer));
-		if(get_current_time() - start_time >= 30)
+		if(get_current_time() - start_time >= 30.0)
 			break;
 	}
 }
@@ -182,7 +181,7 @@ int main(int argc, char const *argv[]) {
 			}
 
 			// check if no children left running
-			if (!running_children) return EXIT_SUCCESS;
+			if (!running_children) break;
 
 			// set timemout to 5 seconds
 			tv.tv_sec = 5;
@@ -194,11 +193,11 @@ int main(int argc, char const *argv[]) {
 
 			// if the return value is -1, error
 			if (retval == -1)
-				perror("Select failed.");
+				fprintf(stderr, "Select failed.");
 			// any other non-zero means a file is readable
 			else if (retval) {
 				// will remove; debug output to visibly see different select cycles
-				printf("Data is available now.\n");
+				// printf("Data is available now.\n");
 				// loop through pipes to find the readable ones
 				for (int i = 0; i < NUM_PIPES * 2; i += 2) {
 					// FD_ISSET returns non-zero when the FD is readable
@@ -223,11 +222,12 @@ int main(int argc, char const *argv[]) {
 		return EXIT_FAILURE;
 	}
 
-	//let user know that file is ready 
-	printf("Output file %s is ready!", OUTPUT_NAME);
+	//let user know that file is ready
+	printf("Output file %s is ready!\n", OUTPUT_NAME);
 
 	//close file connection
 	fclose(output);
+
 	// return at end of process
 	return EXIT_SUCCESS;
 }
